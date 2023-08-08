@@ -1,32 +1,31 @@
-const fs = require('fs');
 const http = require('http');
-const server = http.createServer((req, res) => {
-    const stream = fs.createReadStream('sample.txt');
-    stream.pipe(res);
+const fs = require('fs');
+
+let homeContent ='';
+let projectContent = '';
+
+fs.readFile('home.html', (err, home) => {
+    if (err) throw err
+    homeContent = home;
 });
-server.listen(3000);
 
-// const http = require('http');
-// const fs = require('fs');
-// const server = http.createServer((req, res) => {
-//   const stream = fs.createReadStream('sample.txt');
-//   stream.pipe(res);
-// });
-// server.listen(3000);
-// fs.writeFile (
-//   "sample.txt",
-//   "Hello world, Welcome to Node.js file module",
-//   (err) => {
-//     if(err) throw err;
-//     console.log('File Crated');
-//   }
-// );
+fs.readFile('project.html', (err, project) => {
+    if (err) throw err
+    projectContent = project;
+});
 
-// fs.readFile(
-//   'sample.txt',
-//   (err, data) => {
-//     if(err) throw err;
-//     console.log(data.toString());
-//   }
-// );
-
+http.createServer((request, response) => {
+    let url = request.url;
+    response.writeHead(200, {'Content-Type' : 'text/html'});
+    switch(url) {
+        case "/project" :
+            response.write(projectContent);
+            response.end();
+            break;
+        
+        default :
+            response.write(homeContent);
+            response.end();
+            break;
+    }
+}).listen(3000);
