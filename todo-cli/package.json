@@ -11,7 +11,7 @@
   "lint-staged": {
     "*.js": [
       "eslint",
-      "prettier write ."
+      "prettier --write ."
     ]
   },
   "author": "Irshad <mhdirshad2k2@gmail.com>",
