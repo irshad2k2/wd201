@@ -1,2 +1,5 @@
 node_modules/
-
+connectDB.js
+REFERENCE.md
+.eslintignore
+config/
