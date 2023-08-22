@@ -7,7 +7,7 @@
     "pretest": "NODE_ENV=test npx sequelize-cli db:drop && NODE_ENV=test npx sequelize-cli db:create",
     "test": "NODE_ENV=test jest --detectOpenHandles",
     "start": "nodemon -e js,ejs",
-    "start:prod":"node index.js",
+    "start:prod": "node index.js",
     "prepare": "cd ..&&husky install todo-app/.husky"
   },
   "lint-staged": {
@@ -23,7 +23,6 @@
     "express": "^4.18.2",
     "pg": "^8.11.3",
     "sequelize": "^6.32.1"
-    
   },
   "devDependencies": {
     "eslint": "^8.47.0",
