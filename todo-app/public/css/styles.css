@@ -3,11 +3,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.Todo-item .trash-icon{
+.Todo-item .trash-icon {
   display: none;
-  
 }
-.Todo-item:hover .trash-icon{
+.Todo-item:hover .trash-icon {
   display: inline;
   margin-left: 20px;
 }
