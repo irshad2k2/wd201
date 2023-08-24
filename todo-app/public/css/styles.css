@@ -1,4 +1,17 @@
 body {
-  background-color: rgb(185, 179, 179);
+  background-color: rgb(248, 244, 244);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.Todo-item .trash-icon{
+  display: none;
+  
+}
+.Todo-item:hover .trash-icon{
+  display: inline;
+  margin-left: 20px;
+}
+
+.badge {
+  font-size: 15px;
 }

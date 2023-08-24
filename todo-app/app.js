@@ -13,10 +13,16 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", async function (request, response) {
   const allTodos = await Todo.getTodos();
+  const overDuesList = await Todo.overDueTodos();
+  const dueTodayList = await Todo.dueTodayTodos();
+  const dueLaterList = await Todo.dueLaterTodos();
 
   if (request.accepts("html")) {
     response.render("index", {
       allTodos,
+      overDuesList,
+      dueTodayList,
+      dueLaterList,
     });
   } else {
     response.json({
@@ -28,7 +34,6 @@ app.get("/", async function (request, response) {
 app.get("/todos", async function async(_request, response) {
   console.log("Processing list of all Todos ...");
   // FILL IN YOUR CODE HERE
-
   // First, we have to query our PostgerSQL database using Sequelize to get list of all Todos.
   // Then, we have to respond with all Todos, like:
   // response.send(todos)
