@@ -1,5 +1,5 @@
 "use strict";
-const { Model } = require("sequelize");
+const { Model, where } = require("sequelize");
 const { Op } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Todo extends Model {
@@ -50,6 +50,14 @@ module.exports = (sequelize, DataTypes) => {
 
     markAsCompleted() {
       return this.update({ completed: true });
+    }
+
+    static deleteTodo(id) {
+      return this.destroy({
+        where: {
+          id: id,
+        },
+      });
     }
   }
   Todo.init(
