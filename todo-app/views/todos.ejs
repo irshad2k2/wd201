@@ -1,7 +1,7 @@
 <h5 class="mb-2 fs-4 d-inline"><%=title%> </h5><span id="<%= id %>" class="badge bg-secondary"><%= data.length %></span>
 <ul class="list-unstyled">
     <% for (var i = 0; i < data.length; i++) { %>
-        <li class="Todo-item mb-2 fs-5">
+        <li class="Todo-Item mb-2 fs-5">
             <input class="form-check-input me-1" type="checkbox" <%= data[i].completed? "checked": "" %> onclick="updateTodo(<%= data[i].id %>)" value="" id="checkbox-<%=data[i].id%>">
             <label for="checkbox-<%=data[i].id%>"><%= data[i].title %></label>
             <a class="trash-icon" onclick="deleteTodo(<%= data[i].id %>)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">

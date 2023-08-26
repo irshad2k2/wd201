@@ -26,7 +26,9 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.lt]: new Date(),
           },
+          completed: false,
         },
+        order: [["dueDate", "ASC"]],
       });
     }
 
@@ -34,7 +36,9 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll({
         where: {
           dueDate: new Date(),
+          completed: false,
         },
+        order: [["dueDate", "ASC"]],
       });
     }
 
@@ -44,12 +48,22 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.gt]: new Date(),
           },
+          completed: false,
         },
+        order: [["dueDate", "ASC"]],
       });
     }
-
-    markAsCompleted() {
-      return this.update({ completed: true });
+    static completedTodos() {
+      return this.findAll({
+        where: {
+          completed: true,
+        },
+        order: [["dueDate", "ASC"]],
+      });
+    }
+    setCompletionStatus(completed) {
+      const status = completed === true ? false : true;
+      return this.update({ completed: status });
     }
 
     static deleteTodo(id) {

@@ -14,7 +14,7 @@
     .getAttribute('content');
 
     function updateTodo(id) {
-        fetch(`/todos/${id}/markAsCompleted`, {
+        fetch(`/todos/${id}`, {
             method: "put",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -70,6 +70,7 @@
                 <%- include ('todos.ejs', {title:"Overdue",data:overDuesList,id:"count-overdue"})%>
                 <%- include ('todos.ejs', {title:"Due Today",data:dueTodayList,id:"count-due-today"})%>
                 <%- include ('todos.ejs', {title:"Due Later",data:dueLaterList,id:"count-due-later"})%>
+                <%- include ('todos.ejs', {title:"Completed Items",data:completedTodosList,id:"count-completed"})%>
             </div>
         </div>
     </div>

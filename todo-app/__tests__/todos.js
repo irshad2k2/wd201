@@ -55,13 +55,55 @@ describe("Todo Application test suite", function () {
     res = await agent.get("/");
     csrfToken = extractCsrfToken(res);
 
-    const markCompleteResponse = await agent
-      .put(`/todos/${latestTodo.id}/markASCompleted`)
+    const setCompletionTrueResponse = await agent
+      .put(`/todos/${latestTodo.id}`)
       .send({
         _csrf: csrfToken,
+        completed: true,
       });
-    const parsedUpdateResponse = JSON.parse(markCompleteResponse.text);
-    expect(parsedUpdateResponse.completed).toBe(true);
+    const parsedTrueResponse = JSON.parse(setCompletionTrueResponse.text);
+    expect(parsedTrueResponse.completed).toBe(true);
+
+    res = await agent.get("/");
+    csrfToken = extractCsrfToken(res);
+    const setCompletionFalseResponse = await agent
+      .put(`/todos/${latestTodo.id}`)
+      .send({
+        _csrf: csrfToken,
+        completed: false,
+      });
+    const parsedFalseResponse = JSON.parse(setCompletionFalseResponse.text);
+    expect(parsedFalseResponse.completed).toBe(false);
+  });
+
+  test("Deletes a todo with the given ID if it exists and sends a boolean response", async () => {
+    // FILL IN YOUR CODE HERE
+    let res = await agent.get("/");
+    let csrfToken = extractCsrfToken(res);
+    const testTodo = await agent
+      .post("/todos")
+      .send({
+        title: "sample",
+        dueDate: "2023-05-15",
+        _csrf: csrfToken,
+      })
+      .set("Accept", "application,json");
+    const parsedResponse = JSON.parse(testTodo.text);
+    expect(parsedResponse.id).toBeDefined();
+    res = await agent.get("/");
+    csrfToken = extractCsrfToken(res);
+    const response = await agent.delete(`/todos/${parsedResponse.id}`).send({
+      _csrf: csrfToken,
+    });
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    // res = await agent.get("/");
+    // csrfToken = extractCsrfToken(res);
+    // const reresponse = await agent.delete(`/todos/${parsedResponse.id}`).send({
+    //   _csrf: csrfToken
+    // });
+    // expect(response.status).toBe(200);
+    // expect(reresponse.body.success).toBe(false);
   });
 
   // test("Fetches all todos in the database using /todos endpoint", async () => {
@@ -80,21 +122,5 @@ describe("Todo Application test suite", function () {
 
   //   expect(parsedResponse.length).toBe(4);
   //   expect(parsedResponse[3]["title"]).toBe("Buy ps3");
-  // });
-
-  // test("Deletes a todo with the given ID if it exists and sends a boolean response", async () => {
-  //   // FILL IN YOUR CODE HERE
-  //   const testTodo = await agent.post("/todos").send({
-  //     title: "sample",
-  //     dueDate: "2023-05-15",
-  //   });
-  //   const parsedResponse = JSON.parse(testTodo.text);
-  //   expect(parsedResponse.id).toBeDefined();
-  //   const response = await agent.delete(`/todos/${parsedResponse.id}`).send();
-  //   expect(response.status).toBe(200);
-  //   expect(response.body).toBe(true);
-  //   const reresponse = await agent.delete(`/todos/${parsedResponse.id}`).send();
-  //   expect(response.status).toBe(200);
-  //   expect(reresponse.body).toBe(false);
   // });
 });
