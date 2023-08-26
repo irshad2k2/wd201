@@ -42,8 +42,12 @@ app.get("/", async function (request, response) {
 
 app.post("/todos", async function (request, response) {
   try {
-    await Todo.addTodo(request.body);
-    return response.redirect("/");
+    const todo = await Todo.addTodo(request.body);
+    if (request.accepts("html")) {
+      return response.redirect("/");
+    } else {
+      return response.json(todo);
+    }
   } catch (error) {
     console.log(error);
     return response.status(422).json(error);
