@@ -1,81 +1,35 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="<%= csrfToken %>">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <link rel="stylesheet" href="./css/styles.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
     <title>Todo-app</title>
-</head>
-<script>
-    var token = document
-    .querySelector('meta[name="csrf-token"]')
-    .getAttribute('content');
-
-    function updateTodo(id) {
-        fetch(`/todos/${id}`, {
-            method: "put",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                "_csrf": token,
-            }),
-        })
-            .then((res) => {
-                if(res.ok) {
-                    window.location.reload();
-                }
-            })
-                .catch((err) => console.log(err))
-    }
-    function deleteTodo(id) {
-        fetch(`/todos/${id}`, {
-            method: "delete",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                "_csrf": token,
-            }),
-        })
-            .then((res) => {
-                if(res.ok) {
-                    window.location.reload();
-                }
-            })
-                .catch((err) => console.log(err))
-    }
-</script>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="row">
-            <div class="col text-center mb-2">
-                <%- include ('header.ejs')%>
-            </div>
+      <div class="row">
+        <div class="col text-center mb-2">
+          <%- include ('header.ejs')%>
+          <p>Welcome to my todo application</p>
+          <p>New user? <a href="/signup">Sign Up</a></p>
+          <p>Already have an account <a href="/login">Sign In</a></p>
         </div>
-        <form action="/todos" method="post">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <div class="row justify-content-center mb-4">
-                <div class="col-3">
-                    <input name="title" class="form-control" type="text"  placeholder="What's next" required>
-                </div>
-                <div class="col-2">
-                    <input name="dueDate" class="form-control" type="date" required>
-                </div>
-                <div class="col-1">
-                    <button class="bg-tertiary px-2 py-1 rounded" type="submit">ADD</button>
-                </div>
-            </div>
-        </form>
-        <div class="row justify-content-center">
-            <div class="col-5">
-                <%- include ('todos.ejs', {title:"Overdue",data:overDuesList,id:"count-overdue"})%>
-                <%- include ('todos.ejs', {title:"Due Today",data:dueTodayList,id:"count-due-today"})%>
-                <%- include ('todos.ejs', {title:"Due Later",data:dueLaterList,id:"count-due-later"})%>
-                <%- include ('todos.ejs', {title:"Completed Items",data:completedTodosList,id:"count-completed"})%>
-            </div>
-        </div>
+      </div>
     </div>
-    
+
     <!-- <%- include ('footer.ejs')%>  -->
-</body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"
+  ></script>
 </html>

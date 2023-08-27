@@ -9,54 +9,66 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      Todo.belongsTo(models.User, {
+        foreignKey: "userId",
+      });
       // define association here
     }
 
-    static addTodo({ title, dueDate }) {
-      return this.create({ title: title, dueDate: dueDate, completed: false });
+    static addTodo({ title, dueDate, userId }) {
+      return this.create({
+        title: title,
+        dueDate: dueDate,
+        completed: false,
+        userId,
+      });
     }
 
     static getTodos() {
       return this.findAll();
     }
 
-    static overDueTodos() {
+    static overDueTodos(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.lt]: new Date(),
           },
           completed: false,
+          userId,
         },
         order: [["dueDate", "ASC"]],
       });
     }
 
-    static dueTodayTodos() {
+    static dueTodayTodos(userId) {
       return this.findAll({
         where: {
           dueDate: new Date(),
           completed: false,
+          userId,
         },
         order: [["dueDate", "ASC"]],
       });
     }
 
-    static dueLaterTodos() {
+    static dueLaterTodos(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.gt]: new Date(),
           },
           completed: false,
+          userId,
         },
         order: [["dueDate", "ASC"]],
       });
     }
-    static completedTodos() {
+    static completedTodos(userId) {
       return this.findAll({
         where: {
           completed: true,
+          userId,
         },
         order: [["dueDate", "ASC"]],
       });
@@ -66,10 +78,11 @@ module.exports = (sequelize, DataTypes) => {
       return this.update({ completed: status });
     }
 
-    static deleteTodo(id) {
+    static deleteTodo(id, userId) {
       return this.destroy({
         where: {
-          id: id,
+          id,
+          userId,
         },
       });
     }
