@@ -56,10 +56,10 @@
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="row justify-content-center mb-4">
                 <div class="col-3">
-                    <input name="title" class="form-control" type="text"  placeholder="What's next" required>
+                    <input name="title" class="form-control" type="text"  placeholder="What's next">
                 </div>
                 <div class="col-2">
-                    <input name="dueDate" class="form-control" type="date" required>
+                    <input name="dueDate" class="form-control" type="date">
                 </div>
                 <div class="col-1">
                     <button class="bg-tertiary px-2 py-1 rounded" type="submit">ADD</button>
@@ -73,6 +73,11 @@
                 <%- include ('todo.ejs', {title:"Due Later",data:dueLaterList,id:"count-due-later"})%>
                 <%- include ('todo.ejs', {title:"Completed Items",data:completedTodosList,id:"count-completed"})%>
             </div>
+            <% if(messages && messages.error && messages.error.length > 0)  { %>
+                <% for(var i=0; i<messages.error.length; i++) { %>
+                        <li> <%= messages.error[i] %></li>
+                <% } %>
+              <% } %>
         </div>
     </div>
     

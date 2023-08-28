@@ -11,6 +11,10 @@ const connectEnsureLogin = require("connect-ensure-login");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const flash = require("connect-flash");
+// eslint-disable-next-line no-undef
+app.set("views", path.join(__dirname, "views"));
+app.use(flash());
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
@@ -28,6 +32,10 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(function (request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
 
 passport.use(
   new localStrategy(
@@ -42,14 +50,18 @@ passport.use(
         },
       })
         .then(async (user) => {
+          if (!user) {
+            return done(null, false, { message: "Invalid username" });
+          }
           const result = await bcrypt.compare(password, user.password);
           if (result) {
             return done(null, user);
+          } else {
+            return done(null, false, { message: "Invalid password" });
           }
-          return done("Invalid Password");
         })
         .catch((error) => {
-          return error;
+          return done(error);
         });
     },
   ),
@@ -81,6 +93,56 @@ app.get("/", async function (request, response) {
     csrfToken: request.csrfToken(),
   });
 });
+
+app.get("/signup", async function (request, response) {
+  response.render("signup", {
+    csrfToken: request.csrfToken(),
+  });
+});
+
+app.post("/users", async function (request, response) {
+  const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
+  const { firstName, email } = request.body;
+  if (!firstName || !email) {
+    request.flash("error", "First Name and Email are required");
+    return response.redirect("/signup");
+  }
+  try {
+    const user = await User.create({
+      firstName: request.body.firstName,
+      lastName: request.body.lastName,
+      email: request.body.email,
+      password: hashedPwd,
+    });
+    request.logIn(user, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      response.redirect("/todos");
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/login", (request, response) => {
+  response.render("login", {
+    title: "Login",
+    csrfToken: request.csrfToken(),
+  });
+});
+
+app.post(
+  "/session",
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureFlash: true,
+  }),
+  (request, response) => {
+    console.log(request.user);
+    response.redirect("/todos");
+  },
+);
 
 app.get(
   "/todos",
@@ -117,6 +179,11 @@ app.post(
   "/todo",
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
+    const { title, dueDate } = request.body;
+    if (!title || !dueDate) {
+      request.flash("error", "Title and due date are required");
+      return response.redirect("/todos");
+    }
     try {
       const todo = await Todo.addTodo({
         title: request.body.title,
@@ -192,47 +259,6 @@ app.get(
       console.log(error);
       return response.status(422).json(error);
     }
-  },
-);
-
-app.get("/signup", async function (request, response) {
-  response.render("signup", {
-    csrfToken: request.csrfToken(),
-  });
-});
-
-app.post("/users", async function (request, response) {
-  const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
-  try {
-    const user = await User.create({
-      firstName: request.body.firstName,
-      lastName: request.body.lastName,
-      email: request.body.email,
-      password: hashedPwd,
-    });
-    request.logIn(user, (err) => {
-      if (err) {
-        console.log(err);
-      }
-      response.redirect("/todos");
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-app.get("/login", (request, response) => {
-  response.render("login", {
-    title: "Login",
-    csrfToken: request.csrfToken(),
-  });
-});
-
-app.post(
-  "/session",
-  passport.authenticate("local", { failureRedirect: "/login" }),
-  (request, response) => {
-    response.redirect("/todos");
   },
 );
 
