@@ -89,6 +89,9 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", async function (request, response) {
+  if (request.user) {
+    return response.redirect("/todos");
+  }
   response.render("index", {
     csrfToken: request.csrfToken(),
   });
