@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Administrative actions</h1>
+    <h2><a href="./course/create">Create a course</a></h2>
+    <h2><a href="./courses">My course</a></h2>
+    <hr>
+    <h1>Available Courses</h1>
+    <ul>
+        <% courses.forEach(function(course) { %>
+            <li><a href="/courses/<%= course.id %>/chapters"><%= course.course_name %></a></li>
+        <% }); %>
+    </ul>
+
+</body>
+</html>

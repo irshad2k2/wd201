@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses</title>
+</head>
+<body>
+    <h1>List of Courses</h1>
+    <ul>
+        <% courses.forEach(function(course) { %>
+            <li><a href="/courses/<%= course.id %>/chapters"><%= course.course_name %></a></li>
+        <% }); %>
+    </ul>
+</body>
+</html>
