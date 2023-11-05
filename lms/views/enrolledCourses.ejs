@@ -6,11 +6,16 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Administrative actions</h1>
-    <h2><a href="./course/create">Create a course</a></h2>
-    <h2><a href="./courses">My course</a></h2>
-    <hr>
     <h1>Enrolled courses</h1>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrolled Courses</title>
+</head>
+<body>
+    <h2>Enrolled Courses</h2>
     <% if (enrolledCourses.length > 0) { %>
         <ul>
             <% enrolledCourses.forEach(course => { %>
@@ -24,20 +29,12 @@
     <% } else { %>
         <p>You are not enrolled in any courses yet.</p>
     <% } %>
-    <hr>
-    <h1>Available Courses</h1>
-    <ul>
-        <% courses.forEach(function(course) { %>
-            <li>
-                <a href="/courses/<%= course.id %>/chapters"><%= course.course_name %></a>
-                <form action="/<%= course.id %>/enrollment" method="post">
-                    <!-- <input type="" name="status" id="" value="true">
-                    <input type="text" name="progress" id="" value="100"> -->
-                    <button type="submit">Enroll</button>
-                </form>
-            </li>
-        <% }); %>
-    </ul>
+
+    <!-- Add a link to go back to the homepage or any other relevant page -->
+    <a href="/">Go Back</a>
+</body>
+</html>
+
 </body>
 </html>
 

@@ -1,5 +1,5 @@
 const express = require("express");
-const { user, course, chapter, page } = require('./models')
+const { user, course, chapter, page, enrollment } = require('./models')
 const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -79,7 +79,7 @@ app.post(
 
 app.get('/', async function (request, response) {
   if (request.user) {
-    return response.redirect("/home");
+    return response.redirect(`/home/${request.user.id}`);
   } else {
     response.render("index")
   }
@@ -87,10 +87,21 @@ app.get('/', async function (request, response) {
 
 
 app.get(
-  "/home",
+  "/home/:userID",
   async function (request, response) {
     const coursesData = await course.findAll();
-    await response.render("home", { courses: coursesData })
+    const enrolledCoursesArray = await enrollment.findAll({
+      where: {
+        user_id: request.user.id,
+        status: true, // You can add additional conditions if needed
+      },
+      include: [{
+        model: course,
+        attributes: ['id', 'course_name', 'description'],
+      }],
+    });
+    response.render("home", {courses: coursesData , enrolledCourses: enrolledCoursesArray})
+
   }
 );
 
@@ -262,10 +273,17 @@ app.get(
 app.post(
   "/:courseID/enrollment",
   async function (request, response) {
-    const courseID = request.params.courseID;
-    const userID = request.user.id;
-    response.send(courseID,userID);
+    const courseID = request.params.courseID;    
+    const Enrollment = await enrollment.create({
+      status: true,
+      progress: 0,
+      user_id: request.user.id,
+      course_id: courseID,
+    });
+
+    response.json(Enrollment)
   }
 );
+
 
 module.exports = app;
