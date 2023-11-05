@@ -21,8 +21,8 @@
             <% enrolledCourses.forEach(course => { %>
                 <li>
                     <strong>Course ID:</strong> <%= course.course.id %><br>
-                    <strong>Course Name:</strong> <%= course.course.course_name %><br>
-                    <strong>Description:</strong> <%= course.course.description %>
+                    <strong>Course Name:</strong> <a href=""><%= course.course.course_name %></a><br>
+                    <strong>Description:</strong>  <a href=""><%= course.course.description %></a>
                 </li>
             <% }); %>
         </ul>

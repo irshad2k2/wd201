@@ -10,6 +10,7 @@ const saltRounds = 10;
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
+const { request } = require("http");
 
 app.use(session({
   secret: "secret string123456",
@@ -52,6 +53,54 @@ passport.use(new LocalStrategy(
   }
 ));
 
+function requireEducator(req, res, next) {
+  if (req.user && req.user.role === 'educator') {
+    return next();
+  } else {
+    res.status(401).json({ message: 'Unauthorized user.' });
+  }
+}
+
+// function requireEnrollment(req, res, next) {
+//   const enrolled = enrollment.findOne({
+//     where: {
+//       user_id: req.user.id,
+//       status: true,
+//     }
+//   });
+//   if (enrolled){
+//     return next();
+//   } else {
+//     res.status(401).json({ message: 'Unauthorized user.' });
+//   }
+// }
+
+async function checkEnrollment(req, res, next) {
+  const courseID = req.params.courseID;
+  const userID = req.user.id;
+
+  // Check if the user is enrolled in the specific chapter's course
+  const enrollmentRecord = await enrollment.findOne({
+    where: {
+      user_id: userID,
+      course_id: courseID,
+      status: true,
+    },
+  });
+
+  const courseOwner = await course.findOne({
+    where: {
+      instructor_id: userID
+    }
+  });
+
+  if (enrollmentRecord || courseOwner) {
+    return next();
+  } else {
+    res.status(403).send("You are not enrolled in this course.");
+  }
+}
+
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
@@ -76,9 +125,22 @@ app.post(
   })
 );
 
+app.get("/logout", function(req, res) {
+  req.logout(function(err) {
+    if (err) {
+      console.error(err);
+    }
+    res.redirect("/"); // Redirect the user to the login page after logout
+  });
+});
+
+
 
 app.get('/', async function (request, response) {
   if (request.user) {
+    if (request.user.role == "educator") {
+      return response.redirect(`/homeEducator`);
+    }
     return response.redirect(`/home/${request.user.id}`);
   } else {
     response.render("index")
@@ -93,7 +155,7 @@ app.get(
     const enrolledCoursesArray = await enrollment.findAll({
       where: {
         user_id: request.user.id,
-        status: true, // You can add additional conditions if needed
+        status: true, 
       },
       include: [{
         model: course,
@@ -101,7 +163,24 @@ app.get(
       }],
     });
     response.render("home", {courses: coursesData , enrolledCourses: enrolledCoursesArray})
+  }
+);
 
+app.get(
+  "/homeEducator",
+  async function (request, response) {
+    const coursesData = await course.findAll();
+    const enrolledCoursesArray = await enrollment.findAll({
+      where: {
+        user_id: request.user.id,
+        status: true, 
+      },
+      include: [{
+        model: course,
+        attributes: ['id', 'course_name', 'description'],
+      }],
+    });
+    response.render("homeEducator", {courses: coursesData , enrolledCourses: enrolledCoursesArray})
   }
 );
 
@@ -117,11 +196,6 @@ app.get(
 
 app.post("/user", async function (request, response) {
   const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
-  const { firstName, email } = request.body;
-  if (!firstName || !email) {
-    request.flash("error", "First Name and Email are required");
-    return response.redirect("/signup");
-  }
   try {
     const user_post = await user.create({
       firstName: request.body.firstName,
@@ -130,13 +204,12 @@ app.post("/user", async function (request, response) {
       role: request.body.role,
       password: hashedPwd,
     });
-    response.redirect("/login")
-    // request.logIn(user, (err) => {
-    //   if (err) {
-    //     console.log(err);
-    //   }
-    //   response.redirect("/home");
-    // });
+    request.logIn(user_post, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      return response.redirect("/");
+    });
   } catch (error) {
     console.log(error);
   }
@@ -148,7 +221,6 @@ app.get(
     response.render("login")
   }
 )
-
 
 ///////////////////////////////////////// course //////////////////////////////////////////
 
@@ -170,9 +242,8 @@ app.post(
   },
 );
 
-
 app.get(
-  "/course/create",
+  "/course/create", requireEducator,
   async function (request, response) {
     response.render("courseCreation")
   }
@@ -256,7 +327,7 @@ app.post(
       content: request.body.content,
       chapter_id: request.params.chapterID,
     });
-    response.json(page_post);
+    response.redirect("/homeEducator");
   }
 );
 
@@ -266,7 +337,26 @@ app.get(
     const chapterID = request.params.chapterID;
     response.render("pageCreation", { chapterID })
   }
-)
+);
+
+//my pages
+
+
+app.get("/course/:courseID/chapter/:chapterID/pages", checkEnrollment,
+ async function (request, response) {
+  try {
+    const chapterID = request.params.chapterID
+    const pageData = await page.findAll({
+      where:{
+        chapter_id: chapterID
+      }
+    });
+    response.render("pages", { pages: pageData });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send("Internal Server Error");
+  }
+});
 
 //////////////////////////////////////// enrollment //////////////////////////////////////
 
@@ -281,9 +371,9 @@ app.post(
       course_id: courseID,
     });
 
-    response.json(Enrollment)
+    response.redirect("/")
   }
 );
 
-
+//mark page as complete
 module.exports = app;

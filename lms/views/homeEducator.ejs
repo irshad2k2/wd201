@@ -7,6 +7,12 @@
 </head>
 <body>
     <a href="/logout">Logout</a>
+    <h1>Administrative actions</h1>
+    <h2><a href="/course/create">Create a course</a></h2>
+    <h2><a href="/courses">My course</a></h2>
+
+    <hr>
+
     <h1>Enrolled courses</h1>
     <% if (enrolledCourses.length > 0) { %>
         <ul>
@@ -21,8 +27,8 @@
     <% } else { %>
         <p>You are not enrolled in any courses yet.</p>
     <% } %>
-    <hr>
 
+    <hr>
     
     <h1>Available Courses</h1>
     <ul>
@@ -33,6 +39,8 @@
                 <br>
                 <br>
                 <form action="/<%= course.id %>/enrollment" method="post">
+                    <!-- <input type="" name="status" id="" value="true">
+                    <input type="text" name="progress" id="" value="100"> -->
                     <button type="submit">Enroll</button>
                 </form>
             </li>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>pages</h1>
+    <ul>
+        <% pages.forEach(function(page) { %>
+            <li><strong>Page Title: <%= page.page_name %></strong>
+                <br>
+                <br>
+                <strong>Content:</strong>
+                <br>
+                <%= page.content %>
+                <br>
+                <br>
+                <form action="" method="post">
+                    <button type="submit">Mark as complete</button>
+                </form>
+            </li>
+        <% }); %>
+    </ul>
+</body>
+</html>
+
