@@ -11,6 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      page_progress.belongsTo(models.user, {
+        foreignKey: "user_id"
+      });
+      page_progress.belongsTo(models.page, {
+        foreignKey: "page_id"
+      });
     }
   }
   page_progress.init({

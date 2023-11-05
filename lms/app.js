@@ -1,5 +1,5 @@
 const express = require("express");
-const { user, course, chapter, page, enrollment } = require('./models')
+const { user, course, chapter, page, enrollment, page_progress } = require('./models')
 const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -61,25 +61,11 @@ function requireEducator(req, res, next) {
   }
 }
 
-// function requireEnrollment(req, res, next) {
-//   const enrolled = enrollment.findOne({
-//     where: {
-//       user_id: req.user.id,
-//       status: true,
-//     }
-//   });
-//   if (enrolled){
-//     return next();
-//   } else {
-//     res.status(401).json({ message: 'Unauthorized user.' });
-//   }
-// }
 
 async function checkEnrollment(req, res, next) {
   const courseID = req.params.courseID;
   const userID = req.user.id;
 
-  // Check if the user is enrolled in the specific chapter's course
   const enrollmentRecord = await enrollment.findOne({
     where: {
       user_id: userID,
@@ -130,7 +116,7 @@ app.get("/logout", function(req, res) {
     if (err) {
       console.error(err);
     }
-    res.redirect("/"); // Redirect the user to the login page after logout
+    res.redirect("/"); 
   });
 });
 
@@ -375,5 +361,29 @@ app.post(
   }
 );
 
-//mark page as complete
+////////////////////////////// mark page as complete //////////////////////////////////////
+
+app.post(
+  "/pages/:pageID/markAsComplete",
+  async function (request, response) {
+    try {
+      const markAsComplete = await page_progress.create({
+        page_id: request.params.pageID,
+        user_id: request.user.id,
+        status: true,
+      });
+      if (markAsComplete) {
+        response.status(200).send("Page marked as complete.");
+      } else {
+        response.status(500).send("Failed to mark page as complete.");
+      }
+      response.redirect("./") 
+    } catch (error) {
+      console.error(error);
+      response.status(500).send("Internal Server Error");
+    }
+  }
+);
+
+
 module.exports = app;

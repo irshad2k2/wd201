@@ -17,7 +17,13 @@ module.exports = (sequelize, DataTypes) => {
 
       user.hasMany(models.enrollment, {
         foreignKey: "user_id"
-      })
+      });
+
+      user.hasMany(models.page_progress, {
+        foreignKey: "user_id"
+      });
+
+
     }
   }
   user.init({

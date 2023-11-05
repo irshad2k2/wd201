@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       page.belongsTo(models.chapter, {
         foreignKey: "chapter_id"
+      });
+      page.hasMany(models.page_progress, {
+        foreignKey: "page_id"
       })
     }
   }
