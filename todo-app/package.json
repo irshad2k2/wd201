@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "pretest": "NODE_ENV=test npx sequelize-cli db:drop && NODE_ENV=test npx sequelize-cli db:create && NODE_ENV=test npx sequelize-cli db:migrate",
-    "test": "NODE_ENV=test jest --detectOpenHandles",
+    "test": "NODE_ENV=test jest --detectOpenHandles --coverage",
     "start": "nodemon -e js,ejs",
     "clean:start": "npm run pretest && NODE_ENV=test npm start",
     "start:prod": "node index.js",
