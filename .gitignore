@@ -4,3 +4,4 @@ REFERENCE.md
 .eslintignore
 .eslintrc.json
 seeders
+coverage/
