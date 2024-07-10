@@ -3,12 +3,6 @@
 describe("Todo Application", () => {
   const baseUrl = "http://localhost:3000";
 
-  // before(() => {
-  //   cy.exec("npx sequelize-cli db:migrate:undo:all");
-  //   cy.exec("npx sequelize-cli db:migrate");
-  //   cy.exec("npx sequelize-cli db:seed:all");
-  // });
-
   it("should load the home page", () => {
     cy.visit(baseUrl);
     cy.contains("Welcome");

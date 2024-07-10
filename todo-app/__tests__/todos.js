@@ -114,7 +114,6 @@ describe("Todo Application test suite", function () {
   test("Deletes a todo with the given ID if it exists and sends a boolean response", async () => {
     const agent = request.agent(server);
     await login(agent, "first@last", "first@last");
-    // FILL IN YOUR CODE HERE
     let res = await agent.get("/todos");
     let csrfToken = extractCsrfToken(res);
     const testTodo = await agent
