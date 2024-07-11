@@ -32,7 +32,8 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pg": "^8.11.3",
-    "sequelize": "^6.32.1"
+    "sequelize": "^6.32.1",
+    "tiny-csrf": "^1.1.4"
   },
   "devDependencies": {
     "cheerio": "^1.0.0-rc.12",
@@ -44,7 +45,6 @@
     "nodemon": "^3.0.1",
     "prettier": "^3.0.2",
     "sequelize-cli": "^6.6.1",
-    "supertest": "^6.3.3",
-    "tiny-csrf": "^1.1.4"
+    "supertest": "^6.3.3"
   }
 }
