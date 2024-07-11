@@ -45,16 +45,14 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "DEV_USERNAME=${{ secrets.DEV_USERNAME }}" >> $GITHUB_ENV
-          echo "DEV_PASSWORD=${{ secrets.DEV_PASSWORD }}" >> $GITHUB_ENV
-          echo "DEV_DATABASE=${{ secrets.DEV_DATABASE }}" >> $GITHUB_ENV
+          echo "PROD_USERNAME=${{ secrets.PROD_USERNAME }}" >> $GITHUB_ENV
+          echo "PROD_PASSWORD=${{ secrets.PROD_PASSWORD }}" >> $GITHUB_ENV
+          echo "PROD_DATABASE=${{ secrets.PROD_DATABASE }}" >> $GITHUB_ENV
 
 
       - name: Build Docker Compose
-        run: docker-compose -f todo-app/docker-compose-dev.yml up --build
+        run: docker-compose -f docker-compose-prod.yml up --build
 
-      - name: Print npm debug log
-        run: cat /root/.npm/_logs/2024-07-11T20_36_54_489Z-debug-0.log
 
 
         # run: docker build -t my-app:latest -f todo-app/Dockerfile ./todo-app
@@ -62,8 +60,8 @@ jobs:
       - name: Push Docker image to Docker Hub
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker tag todo-app:dev ${{ secrets.DOCKER_USERNAME }}/todo-app:dev
-          docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:dev
+          docker tag todo-app:prod ${{ secrets.DOCKER_USERNAME }}/todo-app:prod
+          docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:prod
 
       - name: Set up Azure credentials
         uses: azure/login@v1
