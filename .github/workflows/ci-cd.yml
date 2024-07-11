@@ -32,7 +32,9 @@ jobs:
       # - name: Run tests
       #   run: cd todo-app && npm test
 
-      - name: Build Docker image
-        # run: docker build -t my-app:latest -f todo-app/Dockerfile ./todo-app
-        run: docker-compose -f todo-app/docker-compose-dev.yml build ./todo-app
+      - name: Navigate to todo-app directory
+        run: cd wd201/todo-app
+
+      - name: Build Docker Compose
+        run: docker-compose -f docker-compose-dev.yml build
 
