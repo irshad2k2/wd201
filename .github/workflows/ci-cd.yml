@@ -37,13 +37,15 @@ jobs:
           node-version: '14'
 
       - name: Install dependencies
-        run: npm install
+        run: cd todo-app && npm ci
+
 
       - name: Run tests
-        run: npm test
+        run: cd todo-app && npm test
 
       - name: Build Docker image
         run: docker build . -t my-app:latest
+
 
       - name: Push Docker image to Docker Hub
         run: |
