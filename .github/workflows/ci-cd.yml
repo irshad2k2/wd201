@@ -51,7 +51,11 @@ jobs:
 
 
       - name: Build Docker Compose
-        run: docker-compose -f todo-app/docker-compose-dev.yml build
+        run: docker-compose -f todo-app/docker-compose-dev.yml up --build
+
+      - name: Print npm debug log
+        run: cat /root/.npm/_logs/2024-07-11T20_36_54_489Z-debug-0.log
+
 
         # run: docker build -t my-app:latest -f todo-app/Dockerfile ./todo-app
 
