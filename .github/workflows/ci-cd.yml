@@ -57,7 +57,7 @@ jobs:
           echo "PGHOST=localhost" >> $GITHUB_ENV
 
       - name: Run Docker Compose for development
-        run: docker-compose up -d
+        run: docker-compose docker-compose-dev.yml up -d
 
       - name: Wait for PostgreSQL to be ready
         run: docker-compose exec db sh -c 'until pg_isready; do sleep 1; done'
