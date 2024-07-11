@@ -35,5 +35,4 @@ jobs:
       - name: Build Docker image
         # run: docker build -t my-app:latest -f todo-app/Dockerfile ./todo-app
         run: docker-compose -f docker-compose-dev.yml build
-        working-directory: wd201
 
