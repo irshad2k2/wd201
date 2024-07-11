@@ -8,7 +8,7 @@ EXPOSE 3000
 # Production stage
 FROM base as production
 ENV NODE_ENV=production
-RUN npm install --only=production
+RUN npm install --omit=dev
 COPY . /app
 CMD node index.js
 
