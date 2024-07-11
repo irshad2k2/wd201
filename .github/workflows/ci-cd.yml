@@ -28,13 +28,14 @@ jobs:
     #       --health-retries=3
 
     steps:
-
+      - name: Checkout repository
+        uses: actions/checkout@v2
       # - name: Run tests
       #   run: cd todo-app && npm test
 
-      - name: Navigate to todo-app directory
-        run: cd wd201/todo-app
+      # - name: Navigate to todo-app directory
+      #   run: cd wd201/todo-app
 
       - name: Build Docker Compose
-        run: docker-compose -f docker-compose-dev.yml build
+        run: docker-compose -f docker-compose-prod.yml build
 
