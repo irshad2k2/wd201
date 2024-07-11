@@ -37,5 +37,5 @@ jobs:
       #   run: cd wd201/todo-app
 
       - name: Build Docker Compose
-        run: docker-compose -f docker-compose-prod.yml build
+        run: docker-compose -f todo-app/docker-compose-dev.yml build
 
