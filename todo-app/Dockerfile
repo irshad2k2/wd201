@@ -2,14 +2,15 @@
 FROM node:latest as base
 WORKDIR /app
 COPY package.json .
+COPY package-lock.json .
 EXPOSE 3000
 
 # Production stage
 FROM base as production
 ENV NODE_ENV=production
-RUN npm install 
+RUN npm install --only=production
 COPY . /app
-CMD ["npm", "run", "start:prod"]
+CMD node index.js
 
 # Development stage
 FROM base as dev
