@@ -15,7 +15,7 @@ module.exports = {
     database: "wd-todo-test",
     host: "127.0.0.1",
     dialect: "postgres",
-    logging: true,
+    logging: false,
   },
   production: {
     username: process.env.PROD_USERNAME,
