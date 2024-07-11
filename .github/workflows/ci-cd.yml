@@ -36,8 +36,8 @@ jobs:
         with:
           node-version: '21.7.1'
 
-      # - name: Install dependencies
-      #   run: cd todo-app && npm install
+      - name: Install dependencies
+        run: cd todo-app && npm install
 
       # - name: Run tests
       #   run: cd todo-app && npm test
@@ -52,6 +52,14 @@ jobs:
 
       - name: Build Docker Compose
         run: docker-compose -f docker-compose-prod.yml build
+
+      - name: Build Docker Compose up
+        run: docker-compose -f docker-compose-prod.yml up
+
+      - name: Build Docker Compose down
+        run: docker-compose -f docker-compose-prod.yml down
+
+
 
         # run: docker build -t my-app:latest -f todo-app/Dockerfile ./todo-app
 
