@@ -35,7 +35,13 @@ jobs:
 
       # - name: Navigate to todo-app directory
       #   run: cd wd201/todo-app
+      - name: Set environment variables
+        run: |
+          echo "DEV_USERNAME=${{ secrets.DEV_USERNAME }}" >> $GITHUB_ENV
+          echo "DEV_PASSWORD=${{ secrets.DEV_PASSWORD }}" >> $GITHUB_ENV
+          echo "DEV_DATABASE=${{ secrets.DEV_DATABASE }}" >> $GITHUB_ENV
 
+          
       - name: Build Docker Compose
         run: docker-compose -f todo-app/docker-compose-dev.yml build
 
