@@ -37,7 +37,7 @@ jobs:
           node-version: '14'
 
       - name: Install dependencies
-        run: cd todo-app && npm ci
+        run: cd todo-app && npm install
 
 
       - name: Run tests
