@@ -10,7 +10,6 @@
     "clean:start": "npm run pretest && NODE_ENV=test npm start",
     "start:prod": "node index.js",
     "prepare": "cd ..&&husky install todo-app/.husky"
-
   },
   "lint-staged": {
     "*.js": [
