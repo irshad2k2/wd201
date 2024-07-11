@@ -43,7 +43,7 @@ jobs:
         run: cd todo-app && npm test
 
       - name: Build Docker image
-        run: cd todo-app && docker build -t my-app:latest -f todo-app/Dockerfile .
+        run: docker build -t my-app:latest -f wd201/todo-app/Dockerfile wd201
 
       - name: Push Docker image to Docker Hub
         run: |
