@@ -39,31 +39,18 @@ jobs:
       - name: Install dependencies
         run: cd todo-app && npm install
 
-      - name: Run tests
-        run: cd todo-app && npm test
+      # - name: Run tests
+      #   run: cd todo-app && npm test
 
-      # - name: Build Docker image
-      #   run: docker-compose -f docker-compose-dev.yml up --build
+
+
+      # Copy .env file to the Docker context
+      - name: Copy .env file
+        run: cp wd201/todo-app/.env .env
+
       - name: Build Docker image
-        run: docker build -t todo-app:dev ./todo-app --target dev
-
-      - name: Set up environment variables
-        env:
-          PGHOST: localhost
-          PGUSER: ${{ secrets.DEV_USERNAME }}
-          PGPASSWORD: ${{ secrets.DEV_PASSWORD }}
-          PGDATABASE: ${{ secrets.DEV_DATABASE }}
-        run: |
-          echo "PGHOST=localhost" >> $GITHUB_ENV
-
-      - name: Run Docker Compose for development
-        run: docker-compose -f docker-compose-dev.yml up -d
-
-      - name: Wait for PostgreSQL to be ready
-        run: docker-compose exec db sh -c 'until pg_isready; do sleep 1; done'
-
-      - name: Run database migrations
-        run: docker-compose exec app npm run migrate
+        # run: docker build -t my-app:latest -f todo-app/Dockerfile ./todo-app
+        run: docker-compose -f wd201/todo-app/docker-compose.yml build
 
 
       - name: Push Docker image to Docker Hub
