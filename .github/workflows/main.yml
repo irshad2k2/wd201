@@ -3,7 +3,7 @@ on: push
 env:
   PG_DATABASE: wd-todo-test
   PG_USER: postgres
-  PG_PASSWORD: Sherief@12
+  PG_PASSWORD: DBPass
 jobs:
   # Label of the container job
   run-tests:
@@ -38,7 +38,7 @@ jobs:
       # Performs a clean installation of all dependencies in the `package.json` file
       # For more information, see https://docs.npmjs.com/cli/ci.html
       - name: Install dependencies
-        run: cd todo-app && npm ci
+        run: cd todo-app && npm i
 
       - name: Run unit tests
         run: cd todo-app && npm test
