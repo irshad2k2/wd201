@@ -18,7 +18,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: DBPass
-          POSTGRES_DB: wd-todo-dev
+          POSTGRES_DB: wd-todo-prod
         ports:
           - 5432:5432
         options: >-
@@ -52,8 +52,6 @@ jobs:
 
       - name: Build Docker Compose
         run: docker-compose -f docker-compose-prod.yml build
-
-
 
         # run: docker build -t my-app:latest -f todo-app/Dockerfile ./todo-app
 
