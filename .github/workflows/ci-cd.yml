@@ -51,7 +51,7 @@ jobs:
 
 
       - name: Build Docker Compose
-        run: docker-compose -f docker-compose-prod.yml up --build
+        run: docker-compose -f docker-compose-prod.yml build
 
 
 
