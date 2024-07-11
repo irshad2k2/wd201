@@ -68,7 +68,6 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  // console.log("Serializing user in session ", user.id);
   done(null, user.id);
 });
 
@@ -142,7 +141,6 @@ app.post(
     failureFlash: true,
   }),
   (request, response) => {
-    // console.log(request.user);
     response.redirect("/todos");
   },
 );

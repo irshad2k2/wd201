@@ -5,3 +5,4 @@ REFERENCE.md
 .eslintrc.json
 seeders
 coverage/
+.env
