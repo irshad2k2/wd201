@@ -12,36 +12,76 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    # services:
-    #   postgres:
-    #     image: postgres:15
-    #     env:
-    #       POSTGRES_USER: postgres
-    #       POSTGRES_PASSWORD: DBPass
-    #       POSTGRES_DB: wd-todo-dev
-    #     ports:
-    #       - 5432:5432
-    #     options: >-
-    #       --health-cmd="pg_isready"
-    #       --health-interval=10s
-    #       --health-timeout=5s
-    #       --health-retries=3
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: DBPass
+          POSTGRES_DB: wd-todo-dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
-      # - name: Run tests
-      #   run: cd todo-app && npm test
 
-      # - name: Navigate to todo-app directory
-      #   run: cd wd201/todo-app
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: cd todo-app && npm install
+
+      - name: Run tests
+        run: cd todo-app && npm test
+
+
       - name: Set environment variables
         run: |
           echo "DEV_USERNAME=${{ secrets.DEV_USERNAME }}" >> $GITHUB_ENV
           echo "DEV_PASSWORD=${{ secrets.DEV_PASSWORD }}" >> $GITHUB_ENV
           echo "DEV_DATABASE=${{ secrets.DEV_DATABASE }}" >> $GITHUB_ENV
 
-          
+
       - name: Build Docker Compose
         run: docker-compose -f todo-app/docker-compose-dev.yml build
+
+        # run: docker build -t my-app:latest -f todo-app/Dockerfile ./todo-app
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker tag todo-app:dev ${{ secrets.DOCKER_USERNAME }}/todo-app:dev
+          docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:dev
+
+      - name: Set up Azure credentials
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set AKS context
+        run: |
+          az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+
+      - name: Deploy to AKS
+        run: kubectl apply -f k8s/deployment.yaml
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Notify on Discord
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d '{"content": "Deployment failed for ${{ github.repository }} on branch ${{ github.ref }}"}' \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
 
