@@ -11,7 +11,7 @@ services:
     ports:
       - 3000:3000
     env_file:
-      - ./ .env
+      - ../.env
     depends_on:
       - db
 
@@ -20,7 +20,7 @@ services:
     volumes:
       - pg-dev-data:/var/lib/postgresql/data
     env_file:
-      - ./ .env
+      - ../.env
     environment:
       POSTGRES_USER: $DEV_USERNAME
       POSTGRES_PASSWORD: $DEV_PASSWORD
