@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-app
+  name: todo-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: my-app
+      app: todo-app
   template:
     metadata:
       labels:
-        app: my-app
+        app: todo-app
     spec:
       containers:
-      - name: my-app
-        image: irshad1201/my-app:latest
+      - name: todo-app
+        image: irshad1201/todo-app:prod
         ports:
         - containerPort: 3000
         env:
@@ -23,19 +23,19 @@ spec:
         - name: POSTGRES_PASSWORD
           value: "DBPass"
         - name: POSTGRES_DB
-          value: "wd-todo-dev"
+          value: "wd-todo-prod"
         - name: DB_HOST
           value: "postgres"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app-service
+  name: todo-app-service
 spec:
   selector:
-    app: my-app
+    app: todo-app
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 3010
+    targetPort: 3000
   type: LoadBalancer

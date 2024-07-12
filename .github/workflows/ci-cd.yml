@@ -60,7 +60,6 @@ jobs:
         run: sleep 30
 
 
-
         # run: docker build -t my-app:latest -f todo-app/Dockerfile ./todo-app
 
       - name: Push Docker image to Docker Hub

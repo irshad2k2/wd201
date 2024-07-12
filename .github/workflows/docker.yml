@@ -1,0 +1,39 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Build Docker Compose
+      run: docker-compose -f docker-compose-prod.yml build
+
+    # - name: Run Docker Compose up
+    #   run: docker-compose -f docker-compose-prod.yml up -d
+
+    # - name: wait time
+    #   run: sleep 30
+
+    - name: Tag and Push App Docker Image
+      run: |
+        docker tag todo-app:prod ${{ secrets.DOCKER_USERNAME }}/todo-app:prod
+        docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:prod
+
+    - name: Tag and Push Database Docker Image
+      run: |
+        docker tag db:prod ${{ secrets.DOCKER_USERNAME }}/db:prod
+        docker push ${{ secrets.DOCKER_USERNAME }}/db:prod
