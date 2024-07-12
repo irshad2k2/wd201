@@ -89,18 +89,19 @@ jobs:
         run: |
           STATUS="success"
           if [ "${{ job.status }}" != "success" ]; then STATUS="failure"; fi
-          PAYLOAD=$(cat <<EOF
-          {
-            "content": "Deployment status for ${{ github.repository }} on branch ${{ github.ref }}: **${STATUS}**\n
-                        Job ID: ${{ github.run_id }}\n
-                        Workflow: ${{ github.workflow }}\n
-                        Commit: ${{ github.sha }}\n
-                        Actor: ${{ github.actor }}\n
-                        Run Number: ${{ github.run_number }}\n
-                        URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          }
-          EOF
-          )
+          PAYLOAD=$(jq -n \
+            --arg status "$STATUS" \
+            --arg repository "${{ github.repository }}" \
+            --arg ref "${{ github.ref }}" \
+            --arg run_id "${{ github.run_id }}" \
+            --arg workflow "${{ github.workflow }}" \
+            --arg sha "${{ github.sha }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg run_number "${{ github.run_number }}" \
+            --arg url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            '{
+              content: "Deployment status for \($repository) on branch \($ref): **\($status)**\nJob ID: \($run_id)\nWorkflow: \($workflow)\nCommit: \($sha)\nActor: \($actor)\nRun Number: \($run_number)\nURL: \($url)"
+            }')
           curl -H "Content-Type: application/json" \
             -X POST \
             -d "$PAYLOAD" \
