@@ -39,8 +39,14 @@ jobs:
       - name: Install dependencies
         run: cd todo-app && npm install
 
-      - name: Run tests
+      - name: Run unit tests
         run: cd todo-app && npm test
+
+      - name: Run integration tests
+        run: |
+          cd todo-app
+          npm install cypress cypress-json-results
+          npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3000/"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
