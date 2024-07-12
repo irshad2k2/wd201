@@ -22,11 +22,11 @@ jobs:
     - name: Build Docker Compose
       run: docker-compose -f docker-compose-prod.yml build
 
-    # - name: Run Docker Compose up
-    #   run: docker-compose -f docker-compose-prod.yml up -d
+    - name: Run Docker Compose up
+      run: docker-compose -f docker-compose-prod.yml up -d
 
-    # - name: wait time
-    #   run: sleep 30
+    - name: wait time
+      run: sleep 10
 
     - name: Tag and Push App Docker Image
       run: |
