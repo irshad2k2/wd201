@@ -1,41 +1,100 @@
+# Deployment for todo-app (Development)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: todo-app
+  name: todo-app-dev
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: todo-app
+      app: todo-app-dev
   template:
     metadata:
       labels:
-        app: todo-app
+        app: todo-app-dev
     spec:
       containers:
-      - name: todo-app
-        image: irshad1201/todo-app:prod
-        ports:
-        - containerPort: 3000
-        env:
-        - name: POSTGRES_USER
-          value: "postgres"
-        - name: POSTGRES_PASSWORD
-          value: "DBPass"
-        - name: POSTGRES_DB
-          value: "wd-todo-prod"
-        - name: DB_HOST
-          value: "postgres"
+        - name: todo-app-dev
+          image: irshad1201/todo-app:dev  # Adjust to your development image
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "development"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "DBPass"
+            - name: POSTGRES_DB
+              value: "wd-todo-dev"  # Adjust database name for development
+            - name: DB_HOST
+              value: "postgres"
 ---
+# Service for todo-app (Development)
 apiVersion: v1
 kind: Service
 metadata:
-  name: todo-app-service
+  name: todo-app-service-dev
 spec:
-  selector:
-    app: todo-app
+  type: ClusterIP  # Use ClusterIP for development
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 3000
-  type: LoadBalancer
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: todo-app-dev
+---
+# Deployment for postgres (Development)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-dev
+  template:
+    metadata:
+      labels:
+        app: postgres-dev
+    spec:
+      containers:
+        - name: postgres-dev
+          image: irshad1201/postgres:15  # Adjust to your PostgreSQL image
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "DBPass"
+            - name: POSTGRES_DB
+              value: "wd-todo-dev"  # Adjust database name for development
+            - name: DB_HOST
+              value: "postgres-dev"
+          volumeMounts:
+            - name: pg-data
+              mountPath: /var/lib/postgresql/data
+---
+# Service for postgres (Development)
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service-dev
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres-dev
+---
+# PersistentVolumeClaim for PostgreSQL data (Development)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-pvc-dev
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
