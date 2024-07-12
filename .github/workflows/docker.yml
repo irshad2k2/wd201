@@ -22,11 +22,11 @@ jobs:
     - name: Build Docker Compose
       run: docker-compose -f docker-compose-prod.yml build
 
-    - name: Run Docker Compose up
-      run: docker-compose -f docker-compose-prod.yml up -d
+    # - name: Run Docker Compose up
+    #   run: docker-compose -f docker-compose-prod.yml up -d
 
-    - name: wait time
-      run: sleep 10
+    # - name: wait time
+    #   run: sleep 10
 
     - name: Tag and Push App Docker Image
       run: |
@@ -35,5 +35,5 @@ jobs:
 
     - name: Tag and Push Database Docker Image
       run: |
-        docker tag db:prod ${{ secrets.DOCKER_USERNAME }}/db:prod
-        docker push ${{ secrets.DOCKER_USERNAME }}/db:prod
+        docker tag postgres:15 ${{ secrets.DOCKER_USERNAME }}/postgres:15
+        docker push ${{ secrets.DOCKER_USERNAME }}/postgres:15
