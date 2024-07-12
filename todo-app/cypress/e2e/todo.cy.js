@@ -1,7 +1,7 @@
 // eslint-disable-file no-use-before-define
 
 describe("Todo Application", () => {
-  const baseUrl = "http://localhost:5000";
+  const baseUrl = "http://localhost:3000";
 
   it("should load the home page", () => {
     cy.visit(baseUrl);
