@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
@@ -10,12 +10,16 @@ services:
     volumes:
       - pg-dev-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $DEV_USERNAME -d $DEV_DATABASE -h localhost -p 5432"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $DEV_USERNAME -d $DEV_DATABASE -h localhost -p 5432",
+        ]
       interval: 10s
       retries: 5
 
   app:
-    build: 
+    build:
       context: .
     ports:
       - "3000:3000"
@@ -23,8 +27,7 @@ services:
       - ./todo-app:/app
     depends_on:
       db:
-        condition: service_healthy  
-
+        condition: service_healthy
 
 volumes:
   pg-dev-data:

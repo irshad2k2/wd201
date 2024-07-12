@@ -13,17 +13,17 @@ spec:
         app: postgres
     spec:
       containers:
-      - name: postgres
-        image: irshad1201/postgres:15
-        ports:
-        - containerPort: 5432
-        env:
-        - name: POSTGRES_USER
-          value: postgres
-        - name: POSTGRES_PASSWORD
-          value: DBPass
-        - name: POSTGRES_DB
-          value: wd-todo-dev
+        - name: postgres
+          image: irshad1201/postgres:15
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: DBPass
+            - name: POSTGRES_DB
+              value: wd-todo-dev
 ---
 apiVersion: v1
 kind: Service
@@ -38,7 +38,6 @@ spec:
       targetPort: 5432
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -54,15 +53,15 @@ spec:
         app: todo-app
     spec:
       containers:
-      - name: todo-app
-        image: irshad1201/todo-app:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: NODE_ENV
-          value: production
-        - name: DB_HOST
-          value: db
+        - name: todo-app
+          image: irshad1201/todo-app:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: DB_HOST
+              value: db
 ---
 apiVersion: v1
 kind: Service
@@ -75,7 +74,7 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3000
-  type: LoadBalancer  # For exposing to the internet
+  type: LoadBalancer # For exposing to the internet
 
 ---
 apiVersion: v1
@@ -89,4 +88,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3000
-  type: LoadBalancer  # For exposing to the internet
+  type: LoadBalancer # For exposing to the internet
