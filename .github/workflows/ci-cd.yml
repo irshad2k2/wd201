@@ -72,21 +72,10 @@ jobs:
       - name: Build Docker image
         run: docker build -t todo-app:dev .
 
-      - name: Run Docker Compose up
-        run: docker-compose -f docker-compose-prod.yml up -d
-
-      - name: Wait for Docker containers to start
-        run: sleep 10
-
       - name: Tag and Push App Docker Image
         run: |
           docker tag todo-app:prod ${{ secrets.DOCKER_USERNAME }}/todo-app:prod
           docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:prod
-
-      - name: Tag and Push Database Docker Image
-        run: |
-          docker tag postgres:15 ${{ secrets.DOCKER_USERNAME }}/postgres:15
-          docker push ${{ secrets.DOCKER_USERNAME }}/postgres:15
 
       - name: Set up Azure credentials
         uses: azure/login@v1
