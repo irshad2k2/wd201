@@ -85,23 +85,23 @@ jobs:
       - name: Deploy to AKS
         run: kubectl apply -f k8s/deployment.yaml
 
-  notify:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
       - name: Notify on Discord
         run: |
           STATUS="success"
           if [ "${{ job.status }}" != "success" ]; then STATUS="failure"; fi
+          PAYLOAD=$(cat <<EOF
+          {
+            "content": "Deployment status for ${{ github.repository }} on branch ${{ github.ref }}: **${STATUS}**\n
+                        Job ID: ${{ github.run_id }}\n
+                        Workflow: ${{ github.workflow }}\n
+                        Commit: ${{ github.sha }}\n
+                        Actor: ${{ github.actor }}\n
+                        Run Number: ${{ github.run_number }}\n
+                        URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }
+          EOF
+          )
           curl -H "Content-Type: application/json" \
             -X POST \
-            -d '{
-                  "content": "Deployment status for '${{ github.repository }}' on branch '${{ github.ref }}': **'${STATUS}'**\n
-                              Job ID: '${{ github.run_id }}'\n
-                              Workflow: '${{ github.workflow }}'\n
-                              Commit: '${{ github.sha }}'\n
-                              Actor: '${{ github.actor }}'\n
-                              Run Number: '${{ github.run_number }}'\n
-                              URL: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                }' \
+            -d "$PAYLOAD" \
             ${{ secrets.DISCORD_WEBHOOK_URL }}
