@@ -48,7 +48,7 @@ jobs:
           cd todo-app
           npm install
           NODE_ENV=test
-          npm run clean:start
+          PORT=3000 npm run clean:start &
           sleep 5
 
       - name: Run integration tests
