@@ -32,11 +32,11 @@ jobs:
     - name: Run Docker Compose up
       run: docker-compose -f docker-compose-prod.yml up -d
 
-    - name: create db
-      run: docker-compose -f docker-compose-prod.yml exec app npx sequelize-cli db:create
+    # - name: create db
+    #   run: docker-compose -f docker-compose-prod.yml exec app npx sequelize-cli db:create
 
-    - name: migrate db
-      run: docker-compose -f docker-compose-prod.yml exec app npx sequelize-cli db:migrate
+    # - name: migrate db
+    #   run: docker-compose -f docker-compose-prod.yml exec app npx sequelize-cli db:migrate
 
     - name: wait time
       run: sleep 10
