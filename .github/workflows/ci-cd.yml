@@ -34,21 +34,62 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '21.7.1'
+          node-version: "21.7.1"
 
       - name: Install dependencies
         run: cd todo-app && npm install
 
-      # - name: Run tests
-      #   run: cd todo-app && npm test
+      - name: Run tests
+        run: cd todo-app && npm test
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Set environment variables
+        run: |
+          echo "DEV_USERNAME=${{ secrets.DEV_USERNAME }}" >> $GITHUB_ENV
+          echo "DEV_PASSWORD=${{ secrets.DEV_PASSWORD }}" >> $GITHUB_ENV
+          echo "DEV_DATABASE=${{ secrets.DEV_DATABASE }}" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: docker build -t todo-app:dev .
+
+      - name: Run Docker Compose up
+        run: docker-compose -f docker-compose-dev.yml up -d
+
+      - name: wait time
+        run: sleep 60
+
+      - name: Tag and Push App Docker Image
+        run: |
+          docker tag todo-app:dev ${{ secrets.DOCKER_USERNAME }}/todo-app:dev
+          docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:dev
+
+      - name: Tag and Push Database Docker Image
+        run: |
+          docker tag postgres:15 ${{ secrets.DOCKER_USERNAME }}/postgres:15
+          docker push ${{ secrets.DOCKER_USERNAME }}/postgres:15
+
+      - name: Set up Azure credentials
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set AKS context
+        run: |
+          az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+
+      - name: Deploy to AKS
+        run: kubectl apply -f k8s/deployment.yaml
 
       - name: Set environment variables
         run: |
           echo "PROD_USERNAME=${{ secrets.PROD_USERNAME }}" >> $GITHUB_ENV
           echo "PROD_PASSWORD=${{ secrets.PROD_PASSWORD }}" >> $GITHUB_ENV
           echo "PROD_DATABASE=${{ secrets.PROD_DATABASE }}" >> $GITHUB_ENV
-
 
       - name: Build Docker Compose
         run: docker-compose -f docker-compose-prod.yml build
@@ -58,9 +99,6 @@ jobs:
 
       - name: wait time
         run: sleep 30
-
-
-        # run: docker build -t my-app:latest -f todo-app/Dockerfile ./todo-app
 
       - name: Push Docker image to Docker Hub
         run: |
@@ -91,4 +129,3 @@ jobs:
             -X POST \
             -d '{"content": "Deployment failed for ${{ github.repository }} on branch ${{ github.ref }}"}' \
             ${{ secrets.DISCORD_WEBHOOK_URL }}
-
