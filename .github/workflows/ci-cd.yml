@@ -65,9 +65,9 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "DEV_USERNAME=${{ secrets.DEV_USERNAME }}" >> $GITHUB_ENV
-          echo "DEV_PASSWORD=${{ secrets.DEV_PASSWORD }}" >> $GITHUB_ENV
-          echo "DEV_DATABASE=${{ secrets.DEV_DATABASE }}" >> $GITHUB_ENV
+          echo "PROD_USERNAME=${{ secrets.PROD_USERNAME }}" >> $GITHUB_ENV
+          echo "PROD_PASSWORD=${{ secrets.PROD_PASSWORD }}" >> $GITHUB_ENV
+          echo "PROD_DATABASE=${{ secrets.PROD_DATABASE }}" >> $GITHUB_ENV
 
       - name: Build Docker image
         run: docker build -t todo-app:dev .

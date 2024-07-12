@@ -14,20 +14,20 @@ spec:
     spec:
       containers:
         - name: todo-app
-          image: irshad1201/todo-app:dev
+          image: irshad1201/todo-app:prod
           ports:
             - containerPort: 3000
           env:
             - name: NODE_ENV
-              value: "development"
+              value: "production"
             - name: POSTGRES_USER
               value: "postgres"  
             - name: POSTGRES_PASSWORD
               value: "DBPass"    
             - name: POSTGRES_DB
-              value: "wd-todo-dev"  
+              value: "wd-todo-prod"  
             - name: DB_HOST
-              value: postgres-service
+              value: db
 
 ---
 
@@ -39,7 +39,7 @@ spec:
   type: LoadBalancer
   ports:
     - port: 80
-      targetPort: 3000
+      targetPort: 3010
   selector:
     app: todo-app
 
@@ -66,13 +66,13 @@ spec:
             - containerPort: 5432
           env:
             - name: NODE_ENV
-              value: "development"
+              value: "production"
             - name: POSTGRES_USER
               value: "postgres"  
             - name: POSTGRES_PASSWORD
               value: "DBPass"    
             - name: POSTGRES_DB
-              value: "wd-todo-dev"  
+              value: "wd-todo-prod"  
             - name: DB_HOST
               value: postgres-service
       imagePullSecrets:
