@@ -49,15 +49,13 @@ jobs:
           npm install
           NODE_ENV=test
           PORT=3000 npm run clean:start &
-          SERVER_PID=$! 
           sleep 5
 
       - name: Run integration tests
         run: |
           cd todo-app
           npm install cypress cypress-json-results
-          npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3000/"
-          kill $SERVER_PID
+          npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3001/"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1

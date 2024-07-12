@@ -1,5 +1,6 @@
 # Base image
 FROM node:21.7.1 as base
+ENV NODE_ENV=production
 WORKDIR /app
 COPY todo-app/package.json .
 COPY todo-app/package-lock.json .
