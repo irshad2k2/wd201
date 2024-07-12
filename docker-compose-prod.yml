@@ -24,7 +24,7 @@ services:
     volumes:
       - ./todo-app:/app
     env_file:
-      - ../.env
+      - todo-app/.env
     depends_on:
       db:
         condition: service_healthy  
