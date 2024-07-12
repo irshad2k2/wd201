@@ -10,7 +10,7 @@ FROM base as production
 ENV NODE_ENV=production
 RUN npm install
 COPY . /app
-CMD npx sequelize-cli db:create && npx sequelize-cli db:migrate && node index.js
+CMD node index.js && npx sequelize-cli db:create && npx sequelize-cli db:migrate
 
 # Development stage
 FROM base as dev
