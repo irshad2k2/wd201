@@ -16,9 +16,7 @@ services:
 
   app:
     build: 
-      context: ./todo-app
-      target: dev
-    image: todo-app:dev
+      context: .
     ports:
       - "3000:3000"
     volumes:
