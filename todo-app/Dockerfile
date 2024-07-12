@@ -8,8 +8,9 @@ EXPOSE 3000
 # Production stage
 FROM base as production
 ENV NODE_ENV=production
-RUN npm install && npx sequelize-cli db:create --config config/config.js && npx sequelize-cli db:migrate --config config/config.js
+RUN npm install
 COPY . /app
+RUN npx sequelize-cli db:create --config config/config.js && npx sequelize-cli db:migrate --config config/config.js
 CMD node index.js
 
 # Development stage
