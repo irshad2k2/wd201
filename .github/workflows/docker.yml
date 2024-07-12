@@ -22,9 +22,9 @@ jobs:
 
     - name: Set environment variables
       run: |
-        echo "PROD_USERNAME=${{ secrets.PROD_USERNAME }}" >> $GITHUB_ENV
-        echo "PROD_PASSWORD=${{ secrets.PROD_PASSWORD }}" >> $GITHUB_ENV
-        echo "PROD_DATABASE=${{ secrets.PROD_DATABASE }}" >> $GITHUB_ENV
+        echo "DEV_USERNAME=${{ secrets.DEV_USERNAME }}" >> $GITHUB_ENV
+        echo "DEV_PASSWORD=${{ secrets.DEV_PASSWORD }}" >> $GITHUB_ENV
+        echo "DEV_DATABASE=${{ secrets.DEV_DATABASE }}" >> $GITHUB_ENV
 
     # - name: Build Docker Compose
     #   run: docker-compose -f docker-compose-prod.yml build
@@ -45,7 +45,7 @@ jobs:
       run: docker-compose -f docker-compose-dev.yml up -d
 
     - name: wait time
-      run: sleep 10
+      run: sleep 60
 
     - name: Tag and Push App Docker Image
       run: |
