@@ -19,6 +19,13 @@ jobs:
     - name: Login to Docker Hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+
+    - name: Set environment variables
+      run: |
+        echo "PROD_USERNAME=${{ secrets.PROD_USERNAME }}" >> $GITHUB_ENV
+        echo "PROD_PASSWORD=${{ secrets.PROD_PASSWORD }}" >> $GITHUB_ENV
+        echo "PROD_DATABASE=${{ secrets.PROD_DATABASE }}" >> $GITHUB_ENV
+
     - name: Build Docker Compose
       run: docker-compose -f docker-compose-prod.yml build
 
@@ -35,5 +42,5 @@ jobs:
 
     - name: Tag and Push Database Docker Image
       run: |
-        docker tag postgres ${{ secrets.DOCKER_USERNAME }}/postgres
-        docker push ${{ secrets.DOCKER_USERNAME }}/postgres
+        docker tag postgres:15 ${{ secrets.DOCKER_USERNAME }}/postgres:15
+        docker push ${{ secrets.DOCKER_USERNAME }}/postgres:15
