@@ -44,3 +44,15 @@ jobs:
       run: |
         docker tag postgres:15 ${{ secrets.DOCKER_USERNAME }}/postgres:15
         docker push ${{ secrets.DOCKER_USERNAME }}/postgres:15
+
+    - name: Set up Azure credentials
+      uses: azure/login@v1
+      with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Set AKS context
+      run: |
+          az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+
+    - name: Deploy to AKS
+      run: kubectl apply -f k8s/deployment.yaml
