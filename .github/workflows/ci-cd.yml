@@ -61,9 +61,9 @@ jobs:
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: compose docker image
-        run: cd todo-app && docker compose up --build -d &
-             sleep 5
+      # - name: compose docker image
+      #   run: cd todo-app && docker compose up --build -d &
+      #        sleep 5
 
       # - name: Build and push PostgreSQL Docker image
       #   run: |
@@ -72,8 +72,8 @@ jobs:
 
       - name: Build and push Node.js app Docker image
         run: |
-          docker build -t irshad1201/todo-app:21 .
-          docker push irshad1201/todo-app:21
+          docker build -t irshad1201/todo-app:latest .
+          docker push irshad1201/todo-app:latest
 
       # - name: Set up Azure credentials
       #   uses: azure/login@v1
