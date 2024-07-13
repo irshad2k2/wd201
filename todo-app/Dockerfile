@@ -1,5 +1,5 @@
 # Dockerfile
-# Use the official Node.js image with a specified version as a parent image
+# Official Node.js image with a specified version as a parent image
 FROM node:21.7.1
 
 # Set the working directory inside the container
@@ -14,8 +14,8 @@ RUN npm install
 # Copy the rest of the application code to the working directory
 COPY . .
 
-# Expose the port your app runs on
+# Expose the port 
 EXPOSE 3000
 
-# Command to run your application
+# Command to run the application
 CMD ["npm", "start"]
