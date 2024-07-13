@@ -64,6 +64,7 @@ jobs:
 
       - name: Build and push PostgreSQL Docker image
         run: |
+          cd todo-app
           docker build -t irshad1201/postgres:15
           docker push irshad1201/postgres:15
 
