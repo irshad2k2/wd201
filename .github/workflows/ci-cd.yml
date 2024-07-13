@@ -34,7 +34,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "21" 
+          node-version: "21.7.1" 
 
       - name: Install dependencies
         run: cd todo-app && npm install
@@ -72,8 +72,8 @@ jobs:
 
       - name: Build and push Node.js app Docker image
         run: |
-          docker tag todo-app-app:latest irshad1201/todo-app:latest
-          docker push irshad1201/todo-app:latest
+          docker tag todo-app-app irshad1201/todo-app
+          docker push irshad1201/todo-app
 
       - name: Set up Azure credentials
         uses: azure/login@v1

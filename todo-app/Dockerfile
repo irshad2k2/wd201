@@ -1,6 +1,6 @@
 # Dockerfile
 # Use the official Node.js image with a specified version as a parent image
-FROM node:14
+FROM node:21.7.1
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
