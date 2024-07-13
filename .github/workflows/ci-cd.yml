@@ -74,6 +74,7 @@ jobs:
 
       - name: Build and push Node.js app Docker image
         run: |
+          cd todo-app
           docker build -t irshad1201/todo-app:21 .
           docker push irshad1201/todo-app:21
 
