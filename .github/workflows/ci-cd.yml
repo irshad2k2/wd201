@@ -72,8 +72,8 @@ jobs:
 
       - name: Build and push Node.js app Docker image
         run: |
-          docker tag todo-app-app irshad1201/todo-app
-          docker push irshad1201/todo-app
+          docker tag todo-app-app:21 irshad1201/todo-app:21
+          docker push irshad1201/todo-app:21
 
       # - name: Set up Azure credentials
       #   uses: azure/login@v1
