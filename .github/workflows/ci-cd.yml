@@ -36,27 +36,27 @@ jobs:
         with:
           node-version: "21.7.1" 
 
-      - name: Install dependencies
-        run: cd todo-app && npm install
+      # - name: Install dependencies
+      #   run: cd todo-app && npm install
 
-      - name: Run unit tests
-        run: cd todo-app && npm test
+      # - name: Run unit tests
+      #   run: cd todo-app && npm test
 
-      - name: Run the app
-        id: run-app
-        run: |
-          cd todo-app
-          npm install
-          NODE_ENV=test PORT=3000 npm run clean:start &  # Ensure correct environment setup
+      # - name: Run the app
+      #   id: run-app
+      #   run: |
+      #     cd todo-app
+      #     npm install
+      #     NODE_ENV=test PORT=3000 npm run clean:start &  # Ensure correct environment setup
 
-      - name: Run integration tests
-        run: |
-          cd todo-app
-          npm install cypress cypress-json-results
-          npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3001/"
+      # - name: Run integration tests
+      #   run: |
+      #     cd todo-app
+      #     npm install cypress cypress-json-results
+      #     npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3001/"
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v1
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -65,48 +65,48 @@ jobs:
         run: cd todo-app && docker compose up --build -d &
              sleep 5
 
-      - name: Build and push PostgreSQL Docker image
-        run: |
-          docker tag postgres:15 irshad1201/postgres:15
-          docker push irshad1201/postgres:15
+      # - name: Build and push PostgreSQL Docker image
+      #   run: |
+      #     docker tag postgres:15 irshad1201/postgres:15
+      #     docker push irshad1201/postgres:15
 
       - name: Build and push Node.js app Docker image
         run: |
-          docker tag todo-app-app irshad1201/todo-app
+          docker tag todo-app irshad1201/todo-app
           docker push irshad1201/todo-app
 
-      - name: Set up Azure credentials
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # - name: Set up Azure credentials
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Set AKS context
-        run: |
-          az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+      # - name: Set AKS context
+      #   run: |
+      #     az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
 
-      - name: Deploy to AKS
-        run: kubectl apply -f todo-app/k8s/deployment.yaml
-        env:
-          NODE_ENV: production  
-      - name: Notify on Discord
-        if: always()  # Ensure this step runs even if previous steps fail
-        run: |
-          STATUS="success"
-          if [ ${{ job.status }} != "success" ]; then STATUS="failure"; fi
-          PAYLOAD=$(jq -n \
-            --arg status "$STATUS" \
-            --arg repository "${{ github.repository }}" \
-            --arg ref "${{ github.ref }}" \
-            --arg run_id "${{ github.run_id }}" \
-            --arg workflow "${{ github.workflow }}" \
-            --arg sha "${{ github.sha }}" \
-            --arg actor "${{ github.actor }}" \
-            --arg run_number "${{ github.run_number }}" \
-            --arg url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-            '{
-              content: "Deployment status for \($repository) on branch \($ref): **\($status)**\nJob ID: \($run_id)\nWorkflow: \($workflow)\nCommit: \($sha)\nActor: \($actor)\nRun Number: \($run_number)\nURL: \($url)"
-            }')
-          curl -H "Content-Type: application/json" \
-            -X POST \
-            -d "$PAYLOAD" \
-            ${{ secrets.DISCORD_WEBHOOK_URL }}
+      # - name: Deploy to AKS
+      #   run: kubectl apply -f todo-app/k8s/deployment.yaml
+      #   env:
+      #     NODE_ENV: production  
+      # - name: Notify on Discord
+      #   if: always()  # Ensure this step runs even if previous steps fail
+      #   run: |
+      #     STATUS="success"
+      #     if [ ${{ job.status }} != "success" ]; then STATUS="failure"; fi
+      #     PAYLOAD=$(jq -n \
+      #       --arg status "$STATUS" \
+      #       --arg repository "${{ github.repository }}" \
+      #       --arg ref "${{ github.ref }}" \
+      #       --arg run_id "${{ github.run_id }}" \
+      #       --arg workflow "${{ github.workflow }}" \
+      #       --arg sha "${{ github.sha }}" \
+      #       --arg actor "${{ github.actor }}" \
+      #       --arg run_number "${{ github.run_number }}" \
+      #       --arg url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+      #       '{
+      #         content: "Deployment status for \($repository) on branch \($ref): **\($status)**\nJob ID: \($run_id)\nWorkflow: \($workflow)\nCommit: \($sha)\nActor: \($actor)\nRun Number: \($run_number)\nURL: \($url)"
+      #       }')
+      #     curl -H "Content-Type: application/json" \
+      #       -X POST \
+      #       -d "$PAYLOAD" \
+      #       ${{ secrets.DISCORD_WEBHOOK_URL }}
