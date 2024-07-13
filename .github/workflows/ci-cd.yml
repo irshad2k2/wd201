@@ -63,7 +63,7 @@ jobs:
 
       - name: Build and push PostgreSQL Docker image
         run: |
-          docker build -t irshad1201/postgres:15 ./postgres
+          docker build -t irshad1201/postgres:15 .
           docker push irshad1201/postgres:15
 
       - name: Build and push Node.js app Docker image
