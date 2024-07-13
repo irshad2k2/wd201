@@ -61,14 +61,18 @@ jobs:
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+      - name: compose docker image
+        run: cd todo-app && docker compose up --build -d &
+             sleep 5
+
       - name: Build and push PostgreSQL Docker image
         run: |
-          docker build -t irshad1201/postgres:15 .
+          docker tag postgres:15 irshad1201/postgres:15
           docker push irshad1201/postgres:15
 
       - name: Build and push Node.js app Docker image
         run: |
-          docker build -t irshad1201/todo-app:latest .
+          docker tag todo-app-app:latest irshad1201/todo-app:latest
           docker push irshad1201/todo-app:latest
 
       - name: Set up Azure credentials
@@ -83,8 +87,7 @@ jobs:
       - name: Deploy to AKS
         run: kubectl apply -f todo-app/k8s/deployment.yaml
         env:
-          NODE_ENV: production  # Ensure correct environment for deployment
-
+          NODE_ENV: production  
       - name: Notify on Discord
         if: always()  # Ensure this step runs even if previous steps fail
         run: |
