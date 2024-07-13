@@ -34,7 +34,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "21.7.1"
+          node-version: "21" 
 
       - name: Install dependencies
         run: cd todo-app && npm install
@@ -47,9 +47,7 @@ jobs:
         run: |
           cd todo-app
           npm install
-          NODE_ENV=test
-          PORT=3000 npm run clean:start &
-          sleep 5
+          NODE_ENV=test PORT=3000 npm run clean:start &  # Ensure correct environment setup
 
       - name: Run integration tests
         run: |
@@ -63,36 +61,35 @@ jobs:
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      # - name: Set environment variables
-      #   run: |
-      #     echo "PROD_USERNAME=${{ secrets.PROD_USERNAME }}" >> $GITHUB_ENV
-      #     echo "PROD_PASSWORD=${{ secrets.PROD_PASSWORD }}" >> $GITHUB_ENV
-      #     echo "PROD_DATABASE=${{ secrets.PROD_DATABASE }}" >> $GITHUB_ENV
+      - name: Build and push PostgreSQL Docker image
+        run: |
+          docker build -t irshad1201/postgres:15 ./postgres
+          docker push irshad1201/postgres:15
 
-      # - name: Build Docker image
-      #   run: docker build -t todo-app:dev .
+      - name: Build and push Node.js app Docker image
+        run: |
+          docker build -t irshad1201/todo-app:latest .
+          docker push irshad1201/todo-app:latest
 
-      # - name: Tag and Push App Docker Image
-      #   run: |
-      #     docker tag todo-app:prod ${{ secrets.DOCKER_USERNAME }}/todo-app:prod
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:prod
+      - name: Set up Azure credentials
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # - name: Set up Azure credentials
-      #   uses: azure/login@v1
-      #   with:
-      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Set AKS context
+        run: |
+          az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
 
-      # - name: Set AKS context
-      #   run: |
-      #     az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
-
-      # - name: Deploy to AKS
-      #   run: kubectl apply -f k8s/deployment.yaml
+      - name: Deploy to AKS
+        run: kubectl apply -f todo-app/k8s/deployment.yaml
+        env:
+          NODE_ENV: production  # Ensure correct environment for deployment
 
       - name: Notify on Discord
+        if: always()  # Ensure this step runs even if previous steps fail
         run: |
           STATUS="success"
-          if [ "${{ job.status }}" != "success" ]; then STATUS="failure"; fi
+          if [ ${{ job.status }} != "success" ]; then STATUS="failure"; fi
           PAYLOAD=$(jq -n \
             --arg status "$STATUS" \
             --arg repository "${{ github.repository }}" \
