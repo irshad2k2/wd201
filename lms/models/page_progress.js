@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class page_progress extends Model {
     /**
@@ -12,18 +10,21 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       page_progress.belongsTo(models.user, {
-        foreignKey: "user_id"
+        foreignKey: "user_id",
       });
       page_progress.belongsTo(models.page, {
-        foreignKey: "page_id"
+        foreignKey: "page_id",
       });
     }
   }
-  page_progress.init({
-    status: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'page_progress',
-  });
+  page_progress.init(
+    {
+      status: DataTypes.BOOLEAN,
+    },
+    {
+      sequelize,
+      modelName: "page_progress",
+    },
+  );
   return page_progress;
 };

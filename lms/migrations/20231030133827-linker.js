@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     /**
      * Add altering commands here.
      *
@@ -33,7 +33,6 @@ module.exports = {
       },
     });
 
-
     await queryInterface.addColumn("pages", "chapter_id", {
       type: Sequelize.DataTypes.INTEGER,
     });
@@ -45,7 +44,6 @@ module.exports = {
         field: "id",
       },
     });
-
 
     await queryInterface.addColumn("enrollments", "user_id", {
       type: Sequelize.DataTypes.INTEGER,
@@ -70,7 +68,6 @@ module.exports = {
         field: "id",
       },
     });
-
 
     await queryInterface.addColumn("page_progresses", "user_id", {
       type: Sequelize.DataTypes.INTEGER,
@@ -97,13 +94,12 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     /**
      * Add reverting commands here.
      *
      * Example:
      * await queryInterface.dropTable('users');
      */
-  }
+  },
 };
-

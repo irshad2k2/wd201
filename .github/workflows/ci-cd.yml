@@ -34,7 +34,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "21.7.1" 
+          node-version: "21.7.1"
 
       - name: Install dependencies
         run: cd todo-app && npm install
@@ -61,7 +61,6 @@ jobs:
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-
       - name: Build and push PostgreSQL Docker image
         run: |
           cd todo-app
@@ -86,9 +85,9 @@ jobs:
       - name: Deploy to AKS
         run: kubectl apply -f todo-app/k8s/deployment.yaml
         env:
-          NODE_ENV: production  
+          NODE_ENV: production
       - name: Notify on Discord
-        if: always()  # Ensure this step runs even if previous steps fail
+        if: always() # Ensure this step runs even if previous steps fail
         run: |
           STATUS="success"
           if [ ${{ job.status }} != "success" ]; then STATUS="failure"; fi
