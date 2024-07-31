@@ -10,8 +10,103 @@ const localStrategy = require("passport-local");
 const connectEnsureLogin = require("connect-ensure-login");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+require("dotenv").config();
+
 const saltRounds = 10;
 const flash = require("connect-flash");
+
+// Google Gemini
+
+const systemPrompt =
+  "You are an assistant helping a user manage their to-do list. " +
+  "Given a message, you should extract the to-do item from it. " +
+  "The user may provide a due date along with to-do item. " +
+  "To compute relative dates, assume that the current timestamp is " +
+  new Date().toISOString() +
+  " When the input is ambiguous, ask for clarification.";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API);
+const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+  tools: [
+    {
+      function_declarations: [
+        {
+          name: "createTodo",
+          parameters: {
+            type: "OBJECT",
+            description: "Create a new to-do item",
+            properties: {
+              text: {
+                type: "STRING",
+                description: "The text of the to-do item",
+              },
+              dueAt: {
+                type: "STRING",
+                description: "The time the to-do item is due as ISO8601",
+              },
+            },
+            required: ["text", "dueAt"],
+          },
+        },
+      ],
+    },
+  ],
+  toolConfig: {
+    function_calling_config: {
+      mode: "ANY",
+      allowed_function_names: ["createTodo"],
+    },
+  },
+  systemInstruction: systemPrompt,
+});
+
+async function askGemini(question) {
+  try {
+    const prompt = question;
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = await result.response.text();
+    const functionCall = response.candidates[0].content.parts[0].functionCall;
+    if (functionCall) {
+      return functionCall.args;
+    } else {
+      return text;
+    }
+  } catch (error) {
+    console.error("Error making a query to Gemini", error);
+    return null;
+  }
+}
+
+async function addTodoWithGemini(question, userId) {
+  const todoDetails = await askGemini(question);
+
+  if (todoDetails.text) {
+    const newTodo = {
+      title: todoDetails.text,
+      dueDate: todoDetails.dueAt || null,
+    };
+
+    try {
+      const todo = await Todo.create({
+        title: newTodo.title,
+        dueDate: newTodo.dueDate,
+        userId: userId,
+        completed: false,
+      });
+      return todo;
+    } catch (error) {
+      console.error("Error adding to-do to database", error);
+      return null;
+    }
+  } else {
+    console.log("No valid response received from Gemini.");
+    return todoDetails;
+  }
+}
+
 // eslint-disable-next-line no-undef
 app.set("views", path.join(__dirname, "views"));
 app.use(flash());
@@ -88,6 +183,25 @@ app.set("view engine", "ejs");
 
 // eslint-disable-next-line no-undef
 app.use(express.static(path.join(__dirname, "public")));
+
+app.post(
+  "/add-natural",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (req, res) => {
+    const userId = req.user.id;
+    const question = req.body.naturalText;
+
+    const todo = await addTodoWithGemini(question, userId);
+
+    if (todo.title) {
+      req.flash("success", "To-do added successfully!");
+    } else {
+      req.flash("error", "Please provide more details", todo);
+    }
+
+    res.redirect("/todos");
+  },
+);
 
 app.get("/", async function (request, response) {
   if (request.user) {
