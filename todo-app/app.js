@@ -390,4 +390,4 @@ app.get("/logout", (request, response, next) => {
 
 module.exports = app;
 
-// new change added
+// new changes added
