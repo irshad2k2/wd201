@@ -35,7 +35,7 @@ describe("Todo Application", () => {
     cy.url().should("include", "/todos");
     cy.get('input[name="title"]').type("New Todo");
     cy.get('input[name="dueDate"]').type("2024-07-10");
-    cy.get('form button[type="submit"]').click();
+    cy.get('form button[type="submit"]').eq(0).click();
     cy.contains("New Todo");
   });
 
